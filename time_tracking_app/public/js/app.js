@@ -26,6 +26,10 @@ class TimersDashboard extends React.Component {
     this.updateTimer(attrs)
   }
 
+  handleDeleteClick = id => {
+    this.deleteTimer(id)
+  }
+
   createTimer = timer => {
     const t = helpers.newTimer(timer)
     this.setState({
@@ -48,6 +52,12 @@ class TimersDashboard extends React.Component {
     })
   }
 
+  deleteTimer = id => {
+    this.setState({
+      timers: this.state.timers.filter(timer => timer.id !== id)
+    })
+  }
+
   render() {
     return (
       <div className="ui three column centered grid">
@@ -55,6 +65,7 @@ class TimersDashboard extends React.Component {
           <EditableTimerList
             timers={this.state.timers}
             onFormSubmit={this.handleEditFormSubmit}
+            onDeleteClick={this.handleDeleteClick}
           />
           <ToggleableTimerForm onFormSubmit={this.handleCreateFormSubmit} />
         </div>
@@ -74,6 +85,7 @@ class EditableTimerList extends React.Component {
         elapsed={timer.elapsed}
         runningSince={timer.runningSince}
         onFormSubmit={this.props.onFormSubmit}
+        onDeleteClick={this.props.onDeleteClick}
       />
     ))
 
@@ -127,6 +139,7 @@ class EditableTimer extends React.Component {
           elapsed={this.props.elapsed}
           runningSince={this.props.runningSince}
           onEditClick={this.handleEditClick}
+          onDeleteClick={this.props.onDeleteClick}
         />
       )
     }
@@ -241,6 +254,10 @@ class ToggleableTimerForm extends React.Component {
 }
 
 class Timer extends React.Component {
+  handleDeleteClick = () => {
+    this.props.onDeleteClick(this.props.id)
+  }
+
   render() {
     const elapsedString = helpers.renderElapsedString(this.props.elapsed)
 
@@ -259,7 +276,10 @@ class Timer extends React.Component {
             >
               <i className="edit icon" />
             </span>
-            <span className="right floated trash icon">
+            <span
+              className="right floated trash icon"
+              onClick={this.handleDeleteClick}
+            >
               <i className="trash icon" />
             </span>
           </div>
